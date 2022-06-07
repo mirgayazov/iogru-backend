@@ -12,18 +12,19 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { User } from './schemas/user.schema';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  getAll() {
+  getAll(): Promise<User[]> {
     return this.usersService.getAll();
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
+  getOne(@Param('id') id: string): Promise<User> {
     return this.usersService.getById(id);
   }
 
@@ -34,15 +35,15 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return 'remove user ' + id;
+  remove(@Param('id') id: string): Promise<User> {
+    return this.usersService.remove(id);
   }
 
   @Put(':id')
   update(
-    @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: string,
-  ): string {
-    return 'update' + id + updateUserDto.name;
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    return this.usersService.update(id, updateUserDto);
   }
 }
